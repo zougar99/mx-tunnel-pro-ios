@@ -50,7 +50,7 @@ struct SettingsView: View {
     private func serverRow(_ server: ServerConfig) -> some View {
         HStack {
             Image(systemName: server.protocolType.icon)
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
                 .frame(width: 30)
             VStack(alignment: .leading) {
                 Text(server.name)
