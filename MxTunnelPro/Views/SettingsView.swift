@@ -10,44 +10,8 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(header: Text("Servers")) {
-                    ForEach(configManager.servers) { server in
-                        NavigationLink(destination: ServerDetailView(server: server)) {
-                            HStack {
-                                Image(systemName: server.protocolType.icon)
-                                    .foregroundStyle(.accent)
-                                    .frame(width: 30)
-                                VStack(alignment: .leading) {
-                                    Text(server.name)
-                                        .font(.body.bold())
-                                    Text("\(server.protocolType.rawValue) - \(server.serverAddress):\(server.serverPort)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                    }
-                    .onDelete { offsets in
-                        deleteOffsets = offsets
-                        showDeleteAlert = true
-                    }
-                }
-
-                Section(header: Text("About")) {
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text("1.0.0")
-                            .foregroundStyle(.secondary)
-                    }
-                    HStack {
-                        Text("Protocol")
-                        Spacer()
-                        Text("HTTP CONNECT / V2Ray / SSH / SS / WG")
-                            .foregroundStyle(.secondary)
-                            .font(.caption)
-                    }
-                }
+                serverListSection
+                aboutSection
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -65,6 +29,53 @@ struct SettingsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("This action cannot be undone.")
+            }
+        }
+    }
+
+    private var serverListSection: some View {
+        Section(header: Text("Servers")) {
+            ForEach(configManager.servers) { server in
+                NavigationLink(destination: ServerDetailView(server: server)) {
+                    serverRow(server)
+                }
+            }
+            .onDelete { offsets in
+                deleteOffsets = offsets
+                showDeleteAlert = true
+            }
+        }
+    }
+
+    private func serverRow(_ server: ServerConfig) -> some View {
+        HStack {
+            Image(systemName: server.protocolType.icon)
+                .foregroundStyle(.accent)
+                .frame(width: 30)
+            VStack(alignment: .leading) {
+                Text(server.name)
+                    .font(.body.bold())
+                Text("\(server.protocolType.rawValue) - \(server.serverAddress):\(server.serverPort)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var aboutSection: some View {
+        Section(header: Text("About")) {
+            HStack {
+                Text("Version")
+                Spacer()
+                Text("1.0.0")
+                    .foregroundStyle(.secondary)
+            }
+            HStack {
+                Text("Protocol")
+                Spacer()
+                Text("HTTP/SSH/V2Ray/SS/WG")
+                    .foregroundStyle(.secondary)
+                    .font(.caption)
             }
         }
     }

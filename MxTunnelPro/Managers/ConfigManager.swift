@@ -19,7 +19,7 @@ class ConfigManager: ObservableObject {
     func loadServers() {
         guard let data = UserDefaults.standard.data(forKey: serversKey),
               let decoded = try? JSONDecoder().decode([ServerConfig].self, from: data) else {
-            servers = ServerConfig.defaultServers
+            servers = [ServerConfig].defaultServers
             return
         }
         servers = decoded
