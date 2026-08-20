@@ -60,7 +60,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         completionHandler?(nil)
     }
 
-    private func startHTTPTunnel(config: [String: NSObject], completionHandler: @escaping (Error?) -> Void) {
+    private func startHTTPTunnel(config: [String: Any], completionHandler: @escaping (Error?) -> Void) {
         let host = config["serverAddress"] as? String ?? ""
         let port = config["serverPort"] as? UInt16 ?? 8080
         let username = config["username"] as? String ?? ""
@@ -76,7 +76,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         httpHandler.start(completionHandler: completionHandler)
     }
 
-    private func startSSHTunnel(config: [String: NSObject], completionHandler: @escaping (Error?) -> Void) {
+    private func startSSHTunnel(config: [String: Any], completionHandler: @escaping (Error?) -> Void) {
         let host = config["serverAddress"] as? String ?? ""
         let port = config["serverPort"] as? UInt16 ?? 22
         let username = config["username"] as? String ?? ""
@@ -92,7 +92,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         sshHandler.start(completionHandler: completionHandler)
     }
 
-    private func startV2RayTunnel(config: [String: NSObject], completionHandler: @escaping (Error?) -> Void) {
+    private func startV2RayTunnel(config: [String: Any], completionHandler: @escaping (Error?) -> Void) {
         let host = config["serverAddress"] as? String ?? ""
         let port = config["serverPort"] as? UInt16 ?? 443
         let uuid = config["uuid"] as? String ?? ""
@@ -112,7 +112,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         v2rayHandler.start(completionHandler: completionHandler)
     }
 
-    private func startShadowsocksTunnel(config: [String: NSObject], completionHandler: @escaping (Error?) -> Void) {
+    private func startShadowsocksTunnel(config: [String: Any], completionHandler: @escaping (Error?) -> Void) {
         let host = config["serverAddress"] as? String ?? ""
         let port = config["serverPort"] as? UInt16 ?? 8388
         let password = config["password"] as? String ?? ""
@@ -128,7 +128,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         ssHandler.start(completionHandler: completionHandler)
     }
 
-    private func startWireGuardTunnel(config: [String: NSObject], completionHandler: @escaping (Error?) -> Void) {
+    private func startWireGuardTunnel(config: [String: Any], completionHandler: @escaping (Error?) -> Void) {
         let host = config["serverAddress"] as? String ?? ""
         let port = config["serverPort"] as? UInt16 ?? 51820
         let privateKey = config["password"] as? String ?? ""
