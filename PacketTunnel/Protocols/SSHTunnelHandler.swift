@@ -1,4 +1,5 @@
 import NetworkExtension
+import Network
 import Foundation
 
 class SSHTunnelHandler {

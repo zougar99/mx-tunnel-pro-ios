@@ -77,7 +77,7 @@ class ShadowsocksHandler {
 
     func encrypt(data: Data) -> Data? {
         let key = deriveKey()
-        var nonceBytes = Data((0..<12).map { _ in UInt8.random(in: 0...255) })
+        let nonceBytes = Data((0..<12).map { _ in UInt8.random(in: 0...255) })
         guard let nonce = try? AES.GCM.Nonce(data: nonceBytes) else { return nil }
         guard let sealedBox = try? AES.GCM.seal(data, using: key, nonce: nonce) else { return nil }
         var result = nonceBytes

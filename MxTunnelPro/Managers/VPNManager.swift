@@ -89,7 +89,13 @@ class VPNManager: ObservableObject {
         let providerProtocol = NETunnelProviderProtocol()
         providerProtocol.providerBundleIdentifier = tunnelBundleID
         providerProtocol.serverAddress = "\(config.serverAddress):\(config.serverPort)"
-        providerProtocol.providerConfiguration = config.toDictionary() as? [String: NSObject]
+        var providerConfig: [String: NSObject] = [:]
+        for (key, value) in config.toDictionary() {
+            if let nsVal = value as? NSObject {
+                providerConfig[key] = nsVal
+            }
+        }
+        providerProtocol.providerConfiguration = providerConfig
 
         manager.protocolConfiguration = providerProtocol
         manager.localizedDescription = "MxTunnelPro VPN"
