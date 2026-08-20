@@ -1,4 +1,5 @@
 import Foundation
+import NetworkExtension
 import Network
 
 class WireGuardHandler {
@@ -19,8 +20,7 @@ class WireGuardHandler {
 
     func start(completionHandler: @escaping (Error?) -> Void) {
         let udpOptions = NWProtocolUDP.Options()
-
-        let parameters = NWParameters(udp: udpOptions)
+        let parameters = NWParameters(dtls: nil, udp: udpOptions)
 
         let endpoint = NWEndpoint.hostPort(
             host: NWEndpoint.Host(serverHost),
@@ -55,7 +55,7 @@ class WireGuardHandler {
     func buildHandshakeInitiation() -> Data {
         var packet = Data()
         let messageType: UInt32 = 1
-        var senderIndex: UInt32 = UInt32.random(in: 0...UInt32.max)
+        let senderIndex: UInt32 = UInt32.random(in: 0...UInt32.max)
 
         withUnsafeBytes(of: messageType.littleEndian) { packet.append(contentsOf: $0) }
         withUnsafeBytes(of: senderIndex.littleEndian) { packet.append(contentsOf: $0) }
@@ -90,7 +90,7 @@ class WireGuardHandler {
     }
 
     private func startPacketForwarding() {
-        packetTunnelProvider?.packetFlow.readPackets { [weak self] packets, protocols in
+        packetTunnelProvider?.packetFlow.readPackets { [weak self] (packets: [Data], protocols: [NSNumber]) in
             guard let self = self else { return }
             for packet in packets {
                 self.connection?.send(content: packet, completion: .contentProcessed({ error in

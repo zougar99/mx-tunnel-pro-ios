@@ -1,5 +1,5 @@
 import Foundation
-import CryptoKit
+import NetworkExtension
 import Network
 
 class V2RayHandler {
@@ -33,7 +33,6 @@ class V2RayHandler {
         } else {
             parameters = NWParameters(tls: nil, tcp: tcpOptions)
         }
-        parameters.preferNoProxy = true
 
         let endpoint = NWEndpoint.hostPort(
             host: NWEndpoint.Host(serverHost),
@@ -98,7 +97,7 @@ class V2RayHandler {
     }
 
     private func startPacketForwarding() {
-        packetTunnelProvider?.packetFlow.readPackets { [weak self] packets, protocols in
+        packetTunnelProvider?.packetFlow.readPackets { [weak self] (packets: [Data], protocols: [NSNumber]) in
             guard let self = self else { return }
             for packet in packets {
                 self.connection?.send(content: packet, completion: .contentProcessed({ error in

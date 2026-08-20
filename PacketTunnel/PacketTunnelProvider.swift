@@ -1,4 +1,5 @@
 import NetworkExtension
+import Foundation
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
 

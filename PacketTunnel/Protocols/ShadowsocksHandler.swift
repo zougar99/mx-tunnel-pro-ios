@@ -1,5 +1,6 @@
 import Foundation
 import CryptoKit
+import NetworkExtension
 import Network
 
 class ShadowsocksHandler {
@@ -23,7 +24,6 @@ class ShadowsocksHandler {
         tcpOptions.enableKeepalive = true
 
         let parameters = NWParameters(tls: nil, tcp: tcpOptions)
-        parameters.preferNoProxy = true
 
         let endpoint = NWEndpoint.hostPort(
             host: NWEndpoint.Host(serverHost),
@@ -77,9 +77,10 @@ class ShadowsocksHandler {
 
     func encrypt(data: Data) -> Data? {
         let key = deriveKey()
-        let nonce = AES.GCM.Nonce(data: Data((0..<12).map { _ in UInt8.random(in: 0...255) }))
+        var nonceBytes = Data((0..<12).map { _ in UInt8.random(in: 0...255) })
+        guard let nonce = try? AES.GCM.Nonce(data: nonceBytes) else { return nil }
         guard let sealedBox = try? AES.GCM.seal(data, using: key, nonce: nonce) else { return nil }
-        var result = Data(nonce)
+        var result = nonceBytes
         result.append(contentsOf: sealedBox.ciphertext)
         result.append(contentsOf: sealedBox.tag)
         return result
@@ -98,7 +99,7 @@ class ShadowsocksHandler {
     }
 
     private func startPacketForwarding() {
-        packetTunnelProvider?.packetFlow.readPackets { [weak self] packets, protocols in
+        packetTunnelProvider?.packetFlow.readPackets { [weak self] (packets: [Data], protocols: [NSNumber]) in
             guard let self = self else { return }
             for packet in packets {
                 if let encrypted = self.encrypt(data: packet) {

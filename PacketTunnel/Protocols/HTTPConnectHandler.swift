@@ -1,4 +1,5 @@
-import Network
+import NetworkExtension
+import Foundation
 
 class HTTPConnectHandler {
     private weak var packetTunnelProvider: NEPacketTunnelProvider?
@@ -53,7 +54,7 @@ class HTTPConnectHandler {
     }
 
     private func startPacketForwarding() {
-        packetTunnelProvider?.packetFlow.readPackets { [weak self] packets, protocols in
+        packetTunnelProvider?.packetFlow.readPackets { [weak self] (packets: [Data], protocols: [NSNumber]) in
             guard let self = self else { return }
             for packet in packets {
                 self.connection?.send(content: packet, completion: .contentProcessed({ error in
