@@ -19,7 +19,7 @@ jobs:
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '16.0'
+        xcode-version: '16.2'
 
     - name: Install XcodeGen
       run: brew install xcodegen
@@ -27,23 +27,31 @@ jobs:
     - name: Generate Xcode Project
       run: xcodegen generate
 
-    - name: Build IPA
+    - name: Build App
       run: |
         xcodebuild -project MxTunnelPro.xcodeproj \
           -scheme MxTunnelPro \
           -configuration Release \
           -sdk iphoneos \
+          -destination 'generic/platform=iOS' \
           -archivePath build/MxTunnelPro.xcarchive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          ENABLE_BITCODE=NO \
           archive
 
-        xcodebuild -exportArchive \
-          -archivePath build/MxTunnelPro.xcarchive \
-          -exportOptionsPlist ExportOptions.plist \
-          -exportPath build/output
+    - name: Create IPA
+      run: |
+        mkdir -p build/output/Payload
+        mv build/MxTunnelPro.xcarchive/Products/Applications/MxTunnelPro.app build/output/Payload/
+        cd build/output
+        zip -r MxTunnelPro.ipa Payload
+        rm -rf Payload
 
     - name: Upload IPA Artifact
       uses: actions/upload-artifact@v4
       with:
         name: MxTunnelPro-IPA
-        path: build/output/*.ipa
+        path: build/output/MxTunnelPro.ipa
         retention-days: 30
